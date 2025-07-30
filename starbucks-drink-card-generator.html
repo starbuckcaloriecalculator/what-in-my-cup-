@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What's in My Cup - Starbucks Drink Card Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        .starbucks-green { background: linear-gradient(135deg, #00704A 0%, #1e3932 100%); }
+        .card-shadow { box-shadow: 0 10px 30px rgba(0, 112, 74, 0.15); }
+        .gradient-bg { background: linear-gradient(135deg, #f0f9f6 0%, #e8f5f0 50%, #f7f5f3 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-6xl mx-auto px-4 py-6">
+            <div class="text-center">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">
+                    ☕ What's in My Cup?
+                </h1>
+                <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                    Create your perfect Starbucks drink, see the nutrition facts, and generate a beautiful card to share!
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Drink Builder -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Custom Name -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        ☕ Build Your Drink
+                    </h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Custom Drink Name (Optional)</label>
+                        <input type="text" id="customName" placeholder="e.g., My Perfect Morning Boost" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                    </div>
+                </div>
+
+                <!-- Base Drink Selection -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">Choose Your Base</h3>
+                    <select id="baseDrink" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <option value="latte">Caffè Latte - Rich espresso with steamed milk</option>
+                        <option value="americano">Caffè Americano - Espresso shots with hot water</option>
+                        <option value="cappuccino">Cappuccino - Espresso with steamed milk and foam</option>
+                        <option value="macchiato">Caramel Macchiato - Vanilla syrup, steamed milk, espresso, and caramel drizzle</option>
+                        <option value="frappuccino">Caramel Frappuccino - Coffee, milk, and caramel blended with ice</option>
+                        <option value="cold_brew">Cold Brew Coffee - Slow-steeped cold brew coffee</option>
+                        <option value="iced_coffee">Iced Coffee - Freshly brewed coffee served over ice</option>
+                        <option value="green_tea">Green Tea Latte - Matcha green tea with steamed milk</option>
+                        <option value="chai_latte">Chai Tea Latte - Spiced chai tea with steamed milk</option>
+                    </select>
+                </div>
+
+                <!-- Size Selection -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">Size</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <button onclick="selectSize('short')" class="size-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Short</div>
+                            <div class="text-xs text-gray-500">8 fl oz</div>
+                        </button>
+                        <button onclick="selectSize('tall')" class="size-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Tall</div>
+                            <div class="text-xs text-gray-500">12 fl oz</div>
+                        </button>
+                        <button onclick="selectSize('grande')" class="size-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-100 border-green-400">
+                            <div class="text-sm font-medium">Grande</div>
+                            <div class="text-xs text-gray-500">16 fl oz</div>
+                        </button>
+                        <button onclick="selectSize('venti')" class="size-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Venti</div>
+                            <div class="text-xs text-gray-500">20 fl oz</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Milk Selection -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">Milk Choice</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        <button onclick="selectMilk('whole')" class="milk-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-green-100 border-green-400">
+                            <div class="text-sm font-medium">Whole Milk</div>
+                        </button>
+                        <button onclick="selectMilk('nonfat')" class="milk-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">2% Milk</div>
+                        </button>
+                        <button onclick="selectMilk('almond')" class="milk-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Almond Milk</div>
+                            <div class="text-xs text-green-600">🌱 Vegan</div>
+                        </button>
+                        <button onclick="selectMilk('oat')" class="milk-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Oat Milk</div>
+                            <div class="text-xs text-green-600">🌱 Vegan</div>
+                        </button>
+                        <button onclick="selectMilk('coconut')" class="milk-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Coconut Milk</div>
+                            <div class="text-xs text-green-600">🌱 Vegan</div>
+                        </button>
+                        <button onclick="selectMilk('soy')" class="milk-btn px-4 py-3 border border-gray-300 rounded-md hover:bg-green-50 hover:border-green-300 focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <div class="text-sm font-medium">Soy Milk</div>
+                            <div class="text-xs text-green-600">🌱 Vegan</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Syrups -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">Syrups & Sweeteners</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="vanilla" class="syrup-checkbox" onchange="toggleSyrup('vanilla')">
+                                <label for="vanilla" class="font-medium">Vanilla Syrup</label>
+                            </div>
+                            <div class="flex items-center space-x-2 syrup-controls" id="vanilla-controls" style="display: none;">
+                                <button onclick="changePumps('vanilla', -1)" class="px-2 py-1 border rounded">-</button>
+                                <span id="vanilla-pumps">1</span>
+                                <button onclick="changePumps('vanilla', 1)" class="px-2 py-1 border rounded">+</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="caramel" class="syrup-checkbox" onchange="toggleSyrup('caramel')">
+                                <label for="caramel" class="font-medium">Caramel Syrup</label>
+                            </div>
+                            <div class="flex items-center space-x-2 syrup-controls" id="caramel-controls" style="display: none;">
+                                <button onclick="changePumps('caramel', -1)" class="px-2 py-1 border rounded">-</button>
+                                <span id="caramel-pumps">1</span>
+                                <button onclick="changePumps('caramel', 1)" class="px-2 py-1 border rounded">+</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="hazelnut" class="syrup-checkbox" onchange="toggleSyrup('hazelnut')">
+                                <label for="hazelnut" class="font-medium">Hazelnut Syrup</label>
+                            </div>
+                            <div class="flex items-center space-x-2 syrup-controls" id="hazelnut-controls" style="display: none;">
+                                <button onclick="changePumps('hazelnut', -1)" class="px-2 py-1 border rounded">-</button>
+                                <span id="hazelnut-pumps">1</span>
+                                <button onclick="changePumps('hazelnut', 1)" class="px-2 py-1 border rounded">+</button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="sugar_free_vanilla" class="syrup-checkbox" onchange="toggleSyrup('sugar_free_vanilla')">
+                                <label for="sugar_free_vanilla" class="font-medium">Sugar-Free Vanilla</label>
+                                <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Sugar-Free</span>
+                            </div>
+                            <div class="flex items-center space-x-2 syrup-controls" id="sugar_free_vanilla-controls" style="display: none;">
+                                <button onclick="changePumps('sugar_free_vanilla', -1)" class="px-2 py-1 border rounded">-</button>
+                                <span id="sugar_free_vanilla-pumps">1</span>
+                                <button onclick="changePumps('sugar_free_vanilla', 1)" class="px-2 py-1 border rounded">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toppings -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">Toppings & Extras</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="whipped_cream" class="topping-checkbox" onchange="toggleTopping('whipped_cream')">
+                                <label for="whipped_cream" class="font-medium">Whipped Cream</label>
+                                <span class="text-xs bg-orange-100 text-orange-800 px-2 py-1 rounded">Contains Dairy</span>
+                            </div>
+                            <div class="text-sm text-gray-500">+70 cal</div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="extra_shot" class="topping-checkbox" onchange="toggleTopping('extra_shot')">
+                                <label for="extra_shot" class="font-medium">Extra Shot</label>
+                            </div>
+                            <div class="text-sm text-gray-500">+5 cal, +75mg caffeine</div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="caramel_drizzle" class="topping-checkbox" onchange="toggleTopping('caramel_drizzle')">
+                                <label for="caramel_drizzle" class="font-medium">Caramel Drizzle</label>
+                            </div>
+                            <div class="text-sm text-gray-500">+15 cal</div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 border rounded-lg">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="cinnamon_powder" class="topping-checkbox" onchange="toggleTopping('cinnamon_powder')">
+                                <label for="cinnamon_powder" class="font-medium">Cinnamon Powder</label>
+                            </div>
+                            <div class="text-sm text-gray-500">0 cal</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personalization -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4">Personalization</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Your Name or Handle</label>
+                        <input type="text" id="userName" placeholder="e.g., @coffeelover or Sarah" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <p class="text-xs text-gray-500 mt-1">This will appear on your drink card</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Card Preview -->
+            <div class="space-y-6">
+                <!-- Card Preview -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4 text-center">Your Drink Card</h3>
+                    <div class="flex justify-center">
+                        <div id="drinkCard" class="w-full max-w-sm bg-gradient-to-br from-white to-gray-50 rounded-lg shadow-lg border border-gray-200 p-6 space-y-4">
+                            <!-- Header -->
+                            <div class="text-center space-y-2">
+                                <div class="flex items-center justify-center gap-2 mb-2">
+                                    <span class="text-lg">☕</span>
+                                    <span class="text-sm font-medium text-gray-600">WHAT'S IN MY CUP</span>
+                                </div>
+                                <h2 id="cardDrinkName" class="text-xl font-bold text-gray-900 leading-tight">Grande Caffè Latte</h2>
+                                <p id="cardDescription" class="text-sm text-gray-600 leading-relaxed">Rich espresso with steamed milk with Whole Milk</p>
+                            </div>
+
+                            <!-- Size Info -->
+                            <div class="text-center py-2 border-t border-b border-gray-200">
+                                <span id="cardSize" class="text-sm font-medium">Grande (16 fl oz)</span>
+                            </div>
+
+                            <!-- Nutrition Grid -->
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="text-center p-3 rounded-lg bg-white bg-opacity-50">
+                                    <div class="flex items-center justify-center gap-1 mb-1">
+                                        <span class="text-orange-500">🔥</span>
+                                        <span id="cardCalories" class="text-2xl font-bold">190</span>
+                                    </div>
+                                    <span class="text-xs uppercase tracking-wide text-gray-600">Calories</span>
+                                </div>
+                                
+                                <div class="text-center p-3 rounded-lg bg-white bg-opacity-50">
+                                    <div class="flex items-center justify-center gap-1 mb-1">
+                                        <span class="text-blue-500">💧</span>
+                                        <span id="cardSugar" class="text-2xl font-bold">18g</span>
+                                    </div>
+                                    <span class="text-xs uppercase tracking-wide text-gray-600">Sugar</span>
+                                </div>
+                                
+                                <div class="text-center p-3 rounded-lg bg-white bg-opacity-50">
+                                    <div class="flex items-center justify-center gap-1 mb-1">
+                                        <span class="text-yellow-500">⚡</span>
+                                        <span id="cardCaffeine" class="text-2xl font-bold">150mg</span>
+                                    </div>
+                                    <span class="text-xs uppercase tracking-wide text-gray-600">Caffeine</span>
+                                </div>
+                                
+                                <div class="text-center p-3 rounded-lg bg-white bg-opacity-50">
+                                    <div class="flex items-center justify-center gap-1 mb-1">
+                                        <span id="cardProtein" class="text-2xl font-bold">13g</span>
+                                    </div>
+                                    <span class="text-xs uppercase tracking-wide text-gray-600">Protein</span>
+                                </div>
+                            </div>
+
+                            <!-- Badges -->
+                            <div id="cardBadges" class="flex flex-wrap gap-1 justify-center">
+                                <!-- Badges will be added dynamically -->
+                            </div>
+
+                            <!-- User Attribution -->
+                            <div id="cardUserName" class="text-center pt-2 border-t border-gray-200" style="display: none;">
+                                <span class="text-sm font-medium">Created by <span id="userNameDisplay"></span></span>
+                            </div>
+
+                            <!-- Branding -->
+                            <div class="text-center pt-2 border-t border-gray-200">
+                                <span class="text-xs text-gray-500">starbuckcaloriecalculator.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share Tools -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                        📤 Share Your Drink
+                    </h3>
+                    <div class="space-y-4">
+                        <!-- Download Image -->
+                        <button onclick="downloadCard()" class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center gap-2">
+                            <span>📥</span>
+                            Download as Image
+                        </button>
+
+                        <!-- Social Sharing -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="shareToInstagram()" class="bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 flex items-center justify-center gap-2">
+                                <span>📷</span>
+                                Instagram
+                            </button>
+                            
+                            <button onclick="shareToTwitter()" class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center gap-2">
+                                <span>🐦</span>
+                                Twitter
+                            </button>
+                        </div>
+
+                        <!-- Share URL -->
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700">Share Link</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="shareUrl" readonly 
+                                       class="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-xs">
+                                <button onclick="copyShareUrl()" class="px-3 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    📋
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tips -->
+                        <div class="text-xs text-gray-500 space-y-1">
+                            <p>💡 <strong>Instagram Tips:</strong> Download the image and post with a caption</p>
+                            <p>🐦 <strong>Twitter:</strong> Click the Twitter button to share with a link</p>
+                            <p>📱 <strong>Share Link:</strong> Send to friends so they can see your drink recipe</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Drink data
+        const drinkData = {
+            'latte': { name: 'Caffè Latte', description: 'Rich espresso with steamed milk', calories: {short: 90, tall: 150, grande: 190, venti: 250}, caffeine: {short: 75, tall: 150, grande: 150, venti: 300}, sugar: {short: 8, tall: 14, grande: 18, venti: 24}, protein: {short: 6, tall: 10, grande: 13, venti: 17} },
+            'americano': { name: 'Caffè Americano', description: 'Espresso shots with hot water', calories: {short: 5, tall: 10, grande: 15, venti: 20}, caffeine: {short: 75, tall: 150, grande: 225, venti: 300}, sugar: {short: 0, tall: 0, grande: 0, venti: 0}, protein: {short: 1, tall: 1, grande: 2, venti: 2} },
+            'cappuccino': { name: 'Cappuccino', description: 'Espresso with steamed milk and foam', calories: {short: 60, tall: 90, grande: 120, venti: 140}, caffeine: {short: 75, tall: 150, grande: 150, venti: 300}, sugar: {short: 6, tall: 9, grande: 12, venti: 14}, protein: {short: 4, tall: 6, grande: 8, venti: 10} },
+            'macchiato': { name: 'Caramel Macchiato', description: 'Vanilla syrup, steamed milk, espresso, and caramel drizzle', calories: {short: 140, tall: 190, grande: 250, venti: 320}, caffeine: {short: 75, tall: 75, grande: 150, venti: 150}, sugar: {short: 21, tall: 25, grande: 33, venti: 42}, protein: {short: 7, tall: 10, grande: 13, venti: 16} },
+            'frappuccino': { name: 'Caramel Frappuccino', description: 'Coffee, milk, and caramel blended with ice', calories: {short: 180, tall: 240, grande: 320, venti: 420}, caffeine: {short: 50, tall: 65, grande: 95, venti: 120}, sugar: {short: 28, tall: 38, grande: 50, venti: 66}, protein: {short: 3, tall: 4, grande: 5, venti: 6} },
+            'cold_brew': { name: 'Cold Brew Coffee', description: 'Slow-steeped cold brew coffee', calories: {short: 5, tall: 5, grande: 5, venti: 5}, caffeine: {short: 155, tall: 205, grande: 205, venti: 310}, sugar: {short: 0, tall: 0, grande: 0, venti: 0}, protein: {short: 0, tall: 0, grande: 0, venti: 0} },
+            'iced_coffee': { name: 'Iced Coffee', description: 'Freshly brewed coffee served over ice', calories: {short: 5, tall: 5, grande: 5, venti: 5}, caffeine: {short: 120, tall: 165, grande: 165, venti: 235}, sugar: {short: 0, tall: 0, grande: 0, venti: 0}, protein: {short: 1, tall: 1, grande: 1, venti: 1} },
+            'green_tea': { name: 'Green Tea Latte', description: 'Matcha green tea with steamed milk', calories: {short: 190, tall: 240, grande: 320, venti: 400}, caffeine: {short: 25, tall: 55, grande: 80, venti: 110}, sugar: {short: 23, tall: 29, grande: 39, venti: 49}, protein: {short: 6, tall: 8, grande: 11, venti: 14} },
+            'chai_latte': { name: 'Chai Tea Latte', description: 'Spiced chai tea with steamed milk', calories: {short: 120, tall: 190, grande: 240, venti: 310}, caffeine: {short: 40, tall: 70, grande: 95, venti: 145}, sugar: {short: 20, tall: 32, grande: 42, venti: 52}, protein: {short: 4, tall: 6, grande: 8, venti: 10} }
+        };
+
+        const milkData = {
+            'whole': { name: 'Whole Milk', calories: {short: 20, tall: 35, grande: 50, venti: 70}, sugar: {short: 2, tall: 3, grande: 4, venti: 6}, protein: {short: 2, tall: 3, grande: 4, venti: 6}, vegan: false },
+            'nonfat': { name: '2% Milk', calories: {short: 15, tall: 25, grande: 35, venti: 50}, sugar: {short: 2, tall: 3, grande: 4, venti: 6}, protein: {short: 2, tall: 3, grande: 4, venti: 6}, vegan: false },
+            'almond': { name: 'Almond Milk', calories: {short: 5, tall: 10, grande: 15, venti: 20}, sugar: {short: 1, tall: 2, grande: 3, venti: 4}, protein: {short: 0.5, tall: 1, grande: 1.5, venti: 2}, vegan: true },
+            'oat': { name: 'Oat Milk', calories: {short: 15, tall: 25, grande: 35, venti: 50}, sugar: {short: 1, tall: 2, grande: 3, venti: 4}, protein: {short: 1, tall: 2, grande: 3, venti: 4}, vegan: true },
+            'coconut': { name: 'Coconut Milk', calories: {short: 10, tall: 15, grande: 20, venti: 30}, sugar: {short: 1, tall: 1.5, grande: 2, venti: 3}, protein: {short: 0, tall: 0, grande: 0, venti: 0}, vegan: true },
+            'soy': { name: 'Soy Milk', calories: {short: 10, tall: 20, grande: 25, venti: 35}, sugar: {short: 1, tall: 2, grande: 3, venti: 4}, protein: {short: 1.5, tall: 3, grande: 4, venti: 6}, vegan: true }
+        };
+
+        const syrupData = {
+            'vanilla': { name: 'Vanilla Syrup', calories: 20, sugar: 5, vegan: true },
+            'caramel': { name: 'Caramel Syrup', calories: 20, sugar: 5, vegan: true },
+            'hazelnut': { name: 'Hazelnut Syrup', calories: 20, sugar: 5, vegan: true },
+            'sugar_free_vanilla': { name: 'Sugar-Free Vanilla', calories: 0, sugar: 0, vegan: true }
+        };
+
+        const toppingData = {
+            'whipped_cream': { name: 'Whipped Cream', calories: 70, sugar: 6, protein: 1, vegan: false },
+            'caramel_drizzle': { name: 'Caramel Drizzle', calories: 15, sugar: 3, protein: 0, vegan: false },
+            'extra_shot': { name: 'Extra Shot', calories: 5, sugar: 0, protein: 0, caffeine: 75, vegan: true },
+            'cinnamon_powder': { name: 'Cinnamon Powder', calories: 0, sugar: 0, protein: 0, vegan: true }
+        };
+
+        // Current drink configuration
+        let currentDrink = {
+            baseDrink: 'latte',
+            size: 'grande',
+            milk: 'whole',
+            syrups: {},
+            toppings: [],
+            customName: '',
+            userName: ''
+        };
+
+        // Size labels
+        const sizeLabels = {
+            short: 'Short (8 fl oz)',
+            tall: 'Tall (12 fl oz)',
+            grande: 'Grande (16 fl oz)',
+            venti: 'Venti (20 fl oz)'
+        };
+
+        // Event listeners
+        document.getElementById('baseDrink').addEventListener('change', function() {
+            currentDrink.baseDrink = this.value;
+            updateCard();
+        });
+
+        document.getElementById('customName').addEventListener('input', function() {
+            currentDrink.customName = this.value;
+            updateCard();
+        });
+
+        document.getElementById('userName').addEventListener('input', function() {
+            currentDrink.userName = this.value;
+            updateCard();
+        });
+
+        // Functions
+        function selectSize(size) {
+            currentDrink.size = size;
+            // Update UI
+            document.querySelectorAll('.size-btn').forEach(btn => {
+                btn.classList.remove('bg-green-100', 'border-green-400');
+                btn.classList.add('border-gray-300');
+            });
+            event.target.closest('.size-btn').classList.add('bg-green-100', 'border-green-400');
+            event.target.closest('.size-btn').classList.remove('border-gray-300');
+            updateCard();
+        }
+
+        function selectMilk(milk) {
+            currentDrink.milk = milk;
+            // Update UI
+            document.querySelectorAll('.milk-btn').forEach(btn => {
+                btn.classList.remove('bg-green-100', 'border-green-400');
+                btn.classList.add('border-gray-300');
+            });
+            event.target.closest('.milk-btn').classList.add('bg-green-100', 'border-green-400');
+            event.target.closest('.milk-btn').classList.remove('border-gray-300');
+            updateCard();
+        }
+
+        function toggleSyrup(syrup) {
+            const checkbox = document.getElementById(syrup);
+            const controls = document.getElementById(syrup + '-controls');
+            
+            if (checkbox.checked) {
+                currentDrink.syrups[syrup] = 1;
+                controls.style.display = 'flex';
+            } else {
+                delete currentDrink.syrups[syrup];
+                controls.style.display = 'none';
+            }
+            updateCard();
+        }
+
+        function changePumps(syrup, change) {
+            const current = currentDrink.syrups[syrup] || 1;
+            const newValue = Math.max(1, Math.min(5, current + change));
+            currentDrink.syrups[syrup] = newValue;
+            document.getElementById(syrup + '-pumps').textContent = newValue;
+            updateCard();
+        }
+
+        function toggleTopping(topping) {
+            const checkbox = document.getElementById(topping);
+            
+            if (checkbox.checked) {
+                if (!currentDrink.toppings.includes(topping)) {
+                    currentDrink.toppings.push(topping);
+                }
+            } else {
+                currentDrink.toppings = currentDrink.toppings.filter(t => t !== topping);
+            }
+            updateCard();
+        }
+
+        function calculateNutrition() {
+            const base = drinkData[currentDrink.baseDrink];
+            const size = currentDrink.size;
+            
+            let nutrition = {
+                calories: base.calories[size] || 0,
+                caffeine: base.caffeine[size] || 0,
+                sugar: base.sugar[size] || 0,
+                protein: base.protein[size] || 0
+            };
+
+            // Add milk nutrition
+            if (currentDrink.milk && milkData[currentDrink.milk]) {
+                const milk = milkData[currentDrink.milk];
+                nutrition.calories += milk.calories[size] || 0;
+                nutrition.sugar += milk.sugar[size] || 0;
+                nutrition.protein += milk.protein[size] || 0;
+            }
+
+            // Add syrup nutrition
+            Object.entries(currentDrink.syrups).forEach(([syrup, pumps]) => {
+                if (syrupData[syrup]) {
+                    nutrition.calories += syrupData[syrup].calories * pumps;
+                    nutrition.sugar += syrupData[syrup].sugar * pumps;
+                }
+            });
+
+            // Add topping nutrition
+            currentDrink.toppings.forEach(topping => {
+                if (toppingData[topping]) {
+                    nutrition.calories += toppingData[topping].calories || 0;
+                    nutrition.sugar += toppingData[topping].sugar || 0;
+                    nutrition.protein += toppingData[topping].protein || 0;
+                    if (toppingData[topping].caffeine) {
+                        nutrition.caffeine += toppingData[topping].caffeine;
+                    }
+                }
+            });
+
+            return nutrition;
+        }
+
+        function generateBadges(nutrition) {
+            const badges = [];
+            
+            // Vegan check
+            const isVegan = checkVegan();
+            if (isVegan) {
+                badges.push({ label: '🌱 Vegan', color: 'bg-green-100 text-green-800' });
+            }
+            
+            // Sugar level badges
+            if (nutrition.sugar < 10) {
+                badges.push({ label: '💧 Very Low Sugar', color: 'bg-blue-100 text-blue-800' });
+            } else if (nutrition.sugar < 15) {
+                badges.push({ label: '💧 Low Sugar', color: 'bg-blue-100 text-blue-800' });
+            } else if (nutrition.sugar > 30) {
+                badges.push({ label: '🍯 High Sugar', color: 'bg-orange-100 text-orange-800' });
+            }
+            
+            // Protein badge
+            if (nutrition.protein > 8) {
+                badges.push({ label: '💪 Protein Rich', color: 'bg-purple-100 text-purple-800' });
+            }
+            
+            // Caffeine badges
+            if (nutrition.caffeine > 250) {
+                badges.push({ label: '⚡ High Caffeine', color: 'bg-red-100 text-red-800' });
+            } else if (nutrition.caffeine < 50) {
+                badges.push({ label: '😌 Low Caffeine', color: 'bg-green-100 text-green-800' });
+            }
+            
+            // Calorie badges
+            if (nutrition.calories < 100) {
+                badges.push({ label: '🔥 Low Calorie', color: 'bg-green-100 text-green-800' });
+            }
+            
+            return badges;
+        }
+
+        function checkVegan() {
+            // Check milk
+            if (currentDrink.milk && milkData[currentDrink.milk] && !milkData[currentDrink.milk].vegan) {
+                return false;
+            }
+            
+            // Check toppings
+            for (const topping of currentDrink.toppings) {
+                if (toppingData[topping] && !toppingData[topping].vegan) {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
+        function formatDrinkName() {
+            if (currentDrink.customName && currentDrink.customName.trim()) {
+                return currentDrink.customName.trim();
+            }
+            
+            const base = drinkData[currentDrink.baseDrink];
+            let name = base.name;
+            
+            // Add size
+            const sizeLabel = currentDrink.size.charAt(0).toUpperCase() + currentDrink.size.slice(1);
+            name = `${sizeLabel} ${name}`;
+            
+            return name;
+        }
+
+        function generateDescription() {
+            const base = drinkData[currentDrink.baseDrink];
+            let description = base.description;
+            
+            const customizations = [];
+            
+            if (currentDrink.milk && milkData[currentDrink.milk]) {
+                customizations.push(milkData[currentDrink.milk].name);
+            }
+            
+            Object.entries(currentDrink.syrups).forEach(([syrup, pumps]) => {
+                const syrupName = syrupData[syrup]?.name;
+                const pumpText = pumps > 1 ? ` (${pumps} pumps)` : '';
+                customizations.push(`${syrupName}${pumpText}`);
+            });
+            
+            currentDrink.toppings.forEach(topping => {
+                customizations.push(toppingData[topping]?.name);
+            });
+            
+            if (customizations.length > 0) {
+                description += ` with ${customizations.join(', ')}`;
+            }
+            
+            return description;
+        }
+
+        function updateCard() {
+            const nutrition = calculateNutrition();
+            const badges = generateBadges(nutrition);
+            
+            // Update card content
+            document.getElementById('cardDrinkName').textContent = formatDrinkName();
+            document.getElementById('cardDescription').textContent = generateDescription();
+            document.getElementById('cardSize').textContent = sizeLabels[currentDrink.size];
+            document.getElementById('cardCalories').textContent = Math.round(nutrition.calories);
+            document.getElementById('cardSugar').textContent = Math.round(nutrition.sugar) + 'g';
+            document.getElementById('cardCaffeine').textContent = Math.round(nutrition.caffeine) + 'mg';
+            document.getElementById('cardProtein').textContent = Math.round(nutrition.protein) + 'g';
+            
+            // Update badges
+            const badgesContainer = document.getElementById('cardBadges');
+            badgesContainer.innerHTML = '';
+            badges.slice(0, 4).forEach(badge => {
+                const badgeElement = document.createElement('span');
+                badgeElement.className = `text-xs px-2 py-1 rounded ${badge.color}`;
+                badgeElement.textContent = badge.label;
+                badgesContainer.appendChild(badgeElement);
+            });
+            
+            // Update user name
+            const userNameContainer = document.getElementById('cardUserName');
+            const userNameDisplay = document.getElementById('userNameDisplay');
+            if (currentDrink.userName && currentDrink.userName.trim()) {
+                userNameDisplay.textContent = currentDrink.userName.trim();
+                userNameContainer.style.display = 'block';
+            } else {
+                userNameContainer.style.display = 'none';
+            }
+            
+            // Update share URL
+            updateShareUrl();
+        }
+
+        function updateShareUrl() {
+            const params = new URLSearchParams({
+                drink: currentDrink.baseDrink,
+                size: currentDrink.size,
+                milk: currentDrink.milk,
+                syrups: JSON.stringify(currentDrink.syrups),
+                toppings: JSON.stringify(currentDrink.toppings),
+                name: currentDrink.customName,
+                user: currentDrink.userName
+            });
+            
+            const url = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+            document.getElementById('shareUrl').value = url;
+        }
+
+        function downloadCard() {
+            const card = document.getElementById('drinkCard');
+            html2canvas(card, {
+                backgroundColor: null,
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `my-starbucks-drink-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function shareToInstagram() {
+            downloadCard();
+            alert('Image downloaded! Upload it to Instagram and use these hashtags: #StarbucksCustom #WhatsInMyCup #StarbucksCalories');
+        }
+
+        function shareToTwitter() {
+            const url = document.getElementById('shareUrl').value;
+            const text = `Check out my custom Starbucks drink! ☕ ${currentDrink.customName || 'My Perfect Drink'} #StarbucksCustom #WhatsInMyCup`;
+            const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+            window.open(twitterUrl, '_blank');
+        }
+
+        function copyShareUrl() {
+            const shareUrl = document.getElementById('shareUrl');
+            shareUrl.select();
+            document.execCommand('copy');
+            alert('Share URL copied to clipboard!');
+        }
+
+        // Load configuration from URL parameters on page load
+        function loadFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.get('drink')) {
+                currentDrink.baseDrink = urlParams.get('drink');
+                document.getElementById('baseDrink').value = currentDrink.baseDrink;
+            }
+            if (urlParams.get('size')) {
+                currentDrink.size = urlParams.get('size');
+                selectSize(currentDrink.size);
+            }
+            if (urlParams.get('milk')) {
+                currentDrink.milk = urlParams.get('milk');
+                selectMilk(currentDrink.milk);
+            }
+            if (urlParams.get('name')) {
+                currentDrink.customName = urlParams.get('name');
+                document.getElementById('customName').value = currentDrink.customName;
+            }
+            if (urlParams.get('user')) {
+                currentDrink.userName = urlParams.get('user');
+                document.getElementById('userName').value = currentDrink.userName;
+            }
+            
+            try {
+                if (urlParams.get('syrups')) {
+                    currentDrink.syrups = JSON.parse(urlParams.get('syrups'));
+                    Object.entries(currentDrink.syrups).forEach(([syrup, pumps]) => {
+                        const checkbox = document.getElementById(syrup);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                            toggleSyrup(syrup);
+                            document.getElementById(syrup + '-pumps').textContent = pumps;
+                        }
+                    });
+                }
+                if (urlParams.get('toppings')) {
+                    currentDrink.toppings = JSON.parse(urlParams.get('toppings'));
+                    currentDrink.toppings.forEach(topping => {
+                        const checkbox = document.getElementById(topping);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error parsing URL parameters:', error);
+            }
+            
+            updateCard();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFromUrl();
+            updateCard();
+        });
+    </script>
+</body>
+</html>
+
